@@ -1,54 +1,44 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func main() {
-	var primes []int
-	maxPrime := 2
-	primes = append(primes, 2)
+	const MAX = 1000000
+	prime := make([]int, MAX, MAX)
+	check := make([]int, MAX, MAX)
+	count := make([]int, MAX, MAX)
 
-	// input
-	for i := 0; i < 10; i++ {
+	prime[0] = 1
+	prime[1] = 1
+
+	// prime init
+	for i := 2; i < MAX; i++ {
+		if check[i] == 1 {
+			continue
+		}
+
+		if prime[i] == 0 {
+			for j := i * 2; j < MAX; j += i {
+				check[j] = 1
+				prime[j] = 1
+			}
+		}
+	}
+
+	for i := 2; i < MAX; i++ {
+		cnt := 0
+		if prime[i] == 0 {
+			cnt = 1
+		}
+		count[i] = count[i-1] + cnt
+	}
+
+	for {
 		var input int
 		inputCount, _ := fmt.Scanf("%d", &input)
 		if inputCount != 1 {
 			break
-		} else {
-			primeCount := 0
-
-			if input > maxPrime {
-				for x := maxPrime + 1; x <= input; x++ {
-					isPrime := isPrime(x)
-					// Primeであれば追加
-					if isPrime {
-						primes = append(primes, x)
-						maxPrime = x
-					}
-				}
-			}
-
-			for _, primeValue := range primes {
-				if primeValue <= input {
-					primeCount++
-				} else {
-					break
-				}
-			}
-			fmt.Println(primeCount)
 		}
+		fmt.Println(count[input])
 	}
-}
-
-func isPrime(value int) bool {
-	result := true
-	for i := 2; i < value; i++ {
-		if value%i == 0 {
-			result = false
-			break
-		}
-	}
-
-	return result
 }
